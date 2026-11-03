@@ -70,4 +70,16 @@ Public function → tests → known bugs and open conventions.
 
 | Module | Function / class | Tests | Known bugs / open conventions |
 |---|---|---|---|
-| — | — | — | — |
+| (package) | submodule imports, `analysis.xri_cmap` | `test_package.py::test_submodule_imports`, `test_xri_cmap_builds` | — |
+| (data) | `models/arf.fits`, `rmf.fits`, `double_point_source.fits` | `test_package.py::test_bundled_*` | bundled RMF rows unnormalised |
+| instrument | `baseline.__init__` (geometry) | `test_instrument.py::test_baseline_*` | numpy-int `num_pairs` rejected |
+| instrument | `baseline.__init__` (`mirr_reflec`) | `test_baseline_mirror_reflectivity_*` | multi-digit angles misparsed |
+| instrument | `interferometer.__init__` | `test_interferometer_defaults` | — |
+| instrument | `interferometer.add_baseline` | `test_add_baseline_*` | keyword differs from `baseline` |
+| instrument | `interferometer.add_willingale_baseline`, `clear_baselines` | `test_baseline_willingale_parameters`, `test_add_willingale_baselines_and_clear` | — |
+| instrument | `interferometer.gen_pointing` | `test_gen_pointing_*` | wobbler never applied; roller errors swallowed |
+| instrument | `interferometer.smooth_roller` | `test_smooth_roller_*` | `roll_speed` ignored |
+| instrument | `interferometer.discrete_roller` | `test_discrete_roller_*` | steps only once |
+| instrument | `interferometer.random_wobble` | `test_random_wobble_*` | not a random walk |
+| instrument | `interferometer.file_wobble` | `test_file_wobble_reads_csv` | — |
+| instrument | `plot_arf` | `test_plot_arf_smoke` | — |
