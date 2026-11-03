@@ -24,7 +24,7 @@ def _seed_and_no_show(monkeypatch):
     plt.close("all")
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def bundled_paths():
     return {
         "arf": MODELS_DIR / "arf.fits",

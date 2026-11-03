@@ -23,7 +23,9 @@ dev = [
 test = [
     "pytest>=8",
     "pytest-cov",
-    "nbmake",
+    "nbclient",
+    "nbformat",
+    "ipykernel",
     "ipywidgets",
 ]
 

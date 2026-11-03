@@ -14,8 +14,8 @@ pip install -e ".[dev,test]"
 |---|---|
 | `pytest -m "not slow"` | fast tier (unit + physics tests) |
 | `pytest` | everything, including the `slow` tier |
-| `pytest -m slow` | end-to-end workflow with bundled model files |
-| `pytest --nbmake simple_example.ipynb` | execute the example notebook |
+| `pytest -m slow` | end-to-end workflow with bundled files + example notebook (~1 min, ~7 GB peak RAM) |
+| `pytest -m slow -k notebook` | only execute `simple_example.ipynb` (in a temp copy, via nbclient) |
 | `pytest --cov=xrisalis --cov-report=term-missing` | coverage report |
 | `XRISALIS_TEST_SEED=7 pytest` | run with another global seed (check seed independence) |
 | `ruff format --check && ruff check` | formatting and lint (also covers `tests/`) |
@@ -27,11 +27,11 @@ pip install -e ".[dev,test]"
 | `conftest.py` | Agg backend, autouse fixture (seed RNG, `plt.show` no-op, close figures), shared fixtures |
 | `helpers.py` | unit constants (`KEV`, `ARCSEC`), `known_bug`, synthetic FITS builders |
 | `test_<module>.py` | one file per source module in `src/xrisalis/` |
-| `test_workflow.py` | `slow` end-to-end tests |
+| `test_workflow.py` | `slow` end-to-end tests and notebook execution |
 
 ### Fixtures (`conftest.py`)
 - `_seed_and_no_show` (autouse): `np.random.seed(SEED)` (12345 unless `XRISALIS_TEST_SEED` is set), `plt.show` → no-op, `plt.close("all")` after each test.
-- `bundled_paths`: paths to `models/arf.fits`, `rmf.fits`, `double_point_source.fits` and the notebook.
+- `bundled_paths` (session scope): paths to `models/arf.fits`, `rmf.fits`, `double_point_source.fits` and the notebook.
 - `synthetic_responses`: flat SIMPUT spectrum (0.05 ph/cm²/s/keV, 1–7 keV, 60 bins),
   two-baseline ARF (10 and 30 cm²), identity RMF — all in `tmp_path`.
 
@@ -63,6 +63,9 @@ pip install -e ".[dev,test]"
 - **Reconstruction pixel size.** `image_recon_smooth` needs the pixel
   `fov / max(samples)` below λ_min / (2 D_max) (coarser pixels alias or crash); the analysis tests use
   2e-10 rad pixels with 1–1.5 keV photons and D ≤ 1 m.
+- **Notebook.** Executed unchanged with nbclient in `tmp_path` (notebook, style
+  file, symlink to `src/xrisalis/models`), so its `event_list.fits` never lands in
+  the repo. `pytest --nbmake` would run it in the repo root and is not used.
 - **Plots.** Plot functions are smoke-tested only (run under Agg, return a figure
   when asked).
 
@@ -115,3 +118,5 @@ Public function → tests → known bugs and open conventions.
 | analysis | `reconstruction_data` | `test_recon_output_structure` | — |
 | analysis | `filter_data` | `test_filter_data_*` | true positions/energies not filtered |
 | analysis | `plot_inf_image`, `plot_uv`, `plot_res_hist`, `subplots`, `plot_spec_per_baseline` | `test_plot_*`, `test_subplots` | RA/DEC axis order and orientation (convention) |
+| (workflow) | full notebook chain with bundled files, 1000 s | `test_workflow.py::test_workflow_*` (slow) | RA/DEC axis order and orientation (convention) |
+| (notebook) | `simple_example.ipynb` | `test_workflow.py::test_example_notebook_executes` (slow) | — |
