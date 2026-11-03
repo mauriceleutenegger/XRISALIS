@@ -60,6 +60,9 @@ pip install -e ".[dev,test]"
   its tests rely on the 5σ tolerances alone.
 - **Comparing energies in J.** Energies are ~1e-16 J, below `np.isclose`'s default
   `atol=1e-8`; use relative comparisons (`assert_allclose`, or `rtol`, `atol=0`).
+- **Reconstruction pixel size.** `image_recon_smooth` needs the pixel
+  `fov / max(samples)` below λ_min / (2 D_max) (coarser pixels alias or crash); the analysis tests use
+  2e-10 rad pixels with 1–1.5 keV photons and D ≤ 1 m.
 - **Plots.** Plot functions are smoke-tested only (run under Agg, return a figure
   when asked).
 
@@ -106,3 +109,9 @@ Public function → tests → known bugs and open conventions.
 | process | `interferometer_data.process_photon_dpos` | `test_interferometer_data_*`, `test_pure_*`, `test_off_axis_*`, `test_far_off_axis_warns`, `test_multiple_baselines_use_own_fringe_spacing` | oversampled fringe range; axis/sign (convention) |
 | process | `interferometer_data.process_photon_e_base` | — (dead code) | dead code |
 | process | `generate_event_list` | `test_event_list_*` | dropped photons misalign columns; empty list crashes; grid mismatch; 1-based channels; RMF renormalisation (convention) |
+| analysis | `ft_data` | `test_analysis.py::test_ft_data_sinusoid` | — |
+| analysis | `plot_ft`, `hist_data` | `test_plot_ft_axis_scales`, `test_hist_data_labels` | — |
+| analysis | `image_recon_smooth` (+ inner `inverse_fourier`) | `test_recon_*` | coarse pixels alias or crash; returned scale (convention) |
+| analysis | `reconstruction_data` | `test_recon_output_structure` | — |
+| analysis | `filter_data` | `test_filter_data_*` | true positions/energies not filtered |
+| analysis | `plot_inf_image`, `plot_uv`, `plot_res_hist`, `subplots`, `plot_spec_per_baseline` | `test_plot_*`, `test_subplots` | RA/DEC axis order and orientation (convention) |
