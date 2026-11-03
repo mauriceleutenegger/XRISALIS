@@ -20,6 +20,26 @@ pip install -e ".[dev,test]"
 | `XRISALIS_TEST_SEED=7 pytest` | run with another global seed (check seed independence) |
 | `ruff format --check && ruff check` | formatting and lint (also covers `tests/`) |
 
+### CI
+
+`.github/workflows/ci.yml` (local fork, not pushed): job `build` runs ruff and the
+fast tier on Python 3.11–3.14 for every push/PR; job `slow-tests` runs `pytest -m slow`
+on Python 3.13 for manual (`workflow_dispatch`) runs only. Both use a non-editable
+install (`pip install '.[dev,test]'`), which has been checked to pass locally.
+
+### Line coverage (2026-11-03, full suite)
+
+| Module | Cover | Uncovered lines |
+|---|---|---|
+| `analysis.py` | 100 % | — |
+| `instrument.py` | 100 % | — |
+| `images.py` | 90 % | background branch of `generate_from_image`; end of `draw_photons_from_cube` (both behind known crashes) |
+| `process.py` | 82 % | dead `process_photon_e_base`; empty variable-length RMF rows; no-events path (behind a known crash) |
+| total | 92 % | the fast tier alone reaches the same 92 % |
+
+The uncovered lines are reachable only after a bug fix or are dead code. When a fix
+lands, the corresponding xfail test starts covering them.
+
 ## Layout
 
 | File | Contents |
@@ -79,7 +99,8 @@ pip install -e ".[dev,test]"
 
 ## Coverage map
 
-Public function → tests → known bugs and open conventions.
+Public function → tests → known bugs and open conventions. Lists every public function and class in
+`src/xrisalis/` (checked 2026-11-03); keep it complete when adding code or tests.
 
 | Module | Function / class | Tests | Known bugs / open conventions |
 |---|---|---|---|
