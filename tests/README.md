@@ -17,6 +17,7 @@ pip install -e ".[dev,test]"
 | `pytest -m slow` | end-to-end workflow with bundled model files |
 | `pytest --nbmake simple_example.ipynb` | execute the example notebook |
 | `pytest --cov=xrisalis --cov-report=term-missing` | coverage report |
+| `XRISALIS_TEST_SEED=7 pytest` | run with another global seed (check seed independence) |
 | `ruff format --check && ruff check` | formatting and lint (also covers `tests/`) |
 
 ## Layout
@@ -29,12 +30,13 @@ pip install -e ".[dev,test]"
 | `test_workflow.py` | `slow` end-to-end tests |
 
 ### Fixtures (`conftest.py`)
-- `_seed_and_no_show` (autouse): `np.random.seed(12345)`, `plt.show` → no-op, `plt.close("all")` after each test.
+- `_seed_and_no_show` (autouse): `np.random.seed(SEED)` (12345 unless `XRISALIS_TEST_SEED` is set), `plt.show` → no-op, `plt.close("all")` after each test.
 - `bundled_paths`: paths to `models/arf.fits`, `rmf.fits`, `double_point_source.fits` and the notebook.
 - `synthetic_responses`: flat SIMPUT spectrum (0.05 ph/cm²/s/keV, 1–7 keV, 60 bins),
   two-baseline ARF (10 and 30 cm²), identity RMF — all in `tmp_path`.
 
 ### Helpers (`helpers.py`)
+- `SEED`: global test seed (env `XRISALIS_TEST_SEED`, default 12345).
 - `energy_grid(e_min, e_max, n)` → `(lo, hi, mid)` in keV.
 - `write_simput(path, energies, fluxes, ra, dec)`, `write_arf(path, lo, hi, areas, baselines)`,
   `write_rmf(path, lo, hi, matrix=None, tlmin=0)` (identity by default).
@@ -43,7 +45,7 @@ pip install -e ".[dev,test]"
 ## Policies
 
 - **Seeding and tolerances.** Every test starts from a fixed seed, but stochastic
-  assertions must hold for *any* seed: compare against analytic expectations with
+  assertions must hold for *any* seed (check with `XRISALIS_TEST_SEED`): compare against analytic expectations with
   ≥ 5σ tolerances, and state the expectation and σ in the test docstring.
 - **Docstrings.** Every test module says which source module it covers; every test
   has a one-line docstring stating the property checked.
@@ -98,4 +100,9 @@ Public function → tests → known bugs and open conventions.
 | images | `generate_from_image` | `test_generate_from_image_*` | background photons crash; orientation (convention) |
 | images | `draw_photons_from_cube` | `test_draw_photons_from_cube_*` | crashes on pandas 3; `loc` units (convention) |
 | images | `append` | `test_append_*` | drops metadata; fails for empty first image |
-| images | `create_image_from_events` | `test_create_image_from_events_*` | RA/DEC axis order and orientation (convention) |
+| images | `create_image_from_events` | `test_create_image_from_events_*`, `test_process.py::test_event_list_to_detector_positions` | RA/DEC axis order and orientation (convention) |
+| process | `interferometer_data.fre_dif` | `test_process.py::test_fre_dif_*` | — |
+| process | `interferometer_data.__init__`, `copy` | `test_interferometer_data_*` | generator images lack baseline indices |
+| process | `interferometer_data.process_photon_dpos` | `test_interferometer_data_*`, `test_pure_*`, `test_off_axis_*`, `test_far_off_axis_warns`, `test_multiple_baselines_use_own_fringe_spacing` | oversampled fringe range; axis/sign (convention) |
+| process | `interferometer_data.process_photon_e_base` | — (dead code) | dead code |
+| process | `generate_event_list` | `test_event_list_*` | dropped photons misalign columns; empty list crashes; grid mismatch; 1-based channels; RMF renormalisation (convention) |

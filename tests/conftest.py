@@ -9,12 +9,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pytest  # noqa: E402
-from helpers import energy_grid, write_arf, write_rmf, write_simput  # noqa: E402
+from helpers import SEED, energy_grid, write_arf, write_rmf, write_simput  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MODELS_DIR = REPO_ROOT / "src" / "xrisalis" / "models"
-
-SEED = 12345
 
 
 @pytest.fixture(autouse=True)

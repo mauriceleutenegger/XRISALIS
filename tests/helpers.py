@@ -1,8 +1,14 @@
 """Helpers shared by the tests: unit constants, issue markers, FITS builders."""
 
+import os
+
 import numpy as np
 import pytest
 from astropy.io import fits
+
+# Global test seed; override with XRISALIS_TEST_SEED to check that statistical
+# tests do not depend on a particular seed.
+SEED = int(os.environ.get("XRISALIS_TEST_SEED", 12345))
 
 # keV -> J, the conversion used throughout the package
 KEV = 1e3 * 1.602176634e-19
