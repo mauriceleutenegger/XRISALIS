@@ -53,6 +53,11 @@ pip install -e ".[dev,test]"
 - **`convention_pending`.** Tests that pin down current behaviour where the intended
   convention is undecided (disc radial law, units, axis order and signs, roll speed) carry
   `@pytest.mark.convention_pending`. Revisit them once the convention is decided.
+- **Unseedable code.** `images.draw_photons_from_cube` uses its own
+  `np.random.default_rng()`, so `np.random.seed` does not make it reproducible;
+  its tests rely on the 5σ tolerances alone.
+- **Comparing energies in J.** Energies are ~1e-16 J, below `np.isclose`'s default
+  `atol=1e-8`; use relative comparisons (`assert_allclose`, or `rtol`, `atol=0`).
 - **Plots.** Plot functions are smoke-tested only (run under Agg, return a figure
   when asked).
 
@@ -83,3 +88,14 @@ Public function → tests → known bugs and open conventions.
 | instrument | `interferometer.random_wobble` | `test_random_wobble_*` | not a random walk |
 | instrument | `interferometer.file_wobble` | `test_file_wobble_reads_csv` | — |
 | instrument | `plot_arf` | `test_plot_arf_smoke` | — |
+| images | `image` | `test_images.py::test_image_container_defaults` | — |
+| images | `point_source` | `test_point_source_*`, `test_generators_require_energy_or_spectrum` | — |
+| images | spectrum handling (all generators) | `test_generators_store_spectrum`, `test_generators_require_energy_or_spectrum` | spectrum without energy fails |
+| images | `double_point_source`, `m_point_sources` | `test_double_point_source_*`, `test_m_point_sources_fractions`, `test_multi_generators_accept_spectrum_without_energy` | spectrum without energy fails |
+| images | `point_source_multichromatic_range` | `test_multichromatic_range_uniform`, `test_multi_generators_*` | spectrum without energy fails |
+| images | `point_source_multichromatic_gauss` | `test_multichromatic_gauss_mean_and_spread` | — |
+| images | `disc` | `test_disc_*` | energy-spread units; radial law (convention) |
+| images | `generate_from_image` | `test_generate_from_image_*` | background photons crash; orientation (convention) |
+| images | `draw_photons_from_cube` | `test_draw_photons_from_cube_*` | crashes on pandas 3; `loc` units (convention) |
+| images | `append` | `test_append_*` | drops metadata; fails for empty first image |
+| images | `create_image_from_events` | `test_create_image_from_events_*` | RA/DEC axis order and orientation (convention) |

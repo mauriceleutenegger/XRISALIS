@@ -17,3 +17,9 @@ src/xrisalis/models/*
 *.pdf
 simulation.py
 src/xrisalis/version.py
+
+# test artefacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
