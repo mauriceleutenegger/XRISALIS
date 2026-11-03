@@ -20,6 +20,12 @@ dependencies = [
 dev = [
     "ruff~=0.13.2",
 ]
+test = [
+    "pytest>=8",
+    "pytest-cov",
+    "nbmake",
+    "ipywidgets",
+]
 
 [build-system]
 requires = ["setuptools>=77.0","setuptools_scm>=9.2"]
@@ -43,5 +49,13 @@ where = ["src"]
 
 [tool.ruff]
 # Ignore the auto-generated file
-include = ["src/xrisalis/*.py"]
+include = ["src/xrisalis/*.py", "tests/*.py"]
 exclude = ["src/xrisalis/version.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: end-to-end runs with bundled model files and notebook execution",
+    "convention_pending: characterises current behaviour whose intended convention is undecided",
+]
