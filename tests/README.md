@@ -1,5 +1,8 @@
 # XRISALIS test suite
 
+For a function-by-function explanation of the tests see `GUIDE.md`. This suite
+was written with AI assistance; see `AI_DISCLOSURE.md`.
+
 ## Running
 
 Environment: mamba env `xrisalis` (Python 3.13), package installed editable:
@@ -48,6 +51,8 @@ lands, the corresponding xfail test starts covering them.
 | `helpers.py` | unit constants (`KEV`, `ARCSEC`), `known_bug`, synthetic FITS builders |
 | `test_<module>.py` | one file per source module in `src/xrisalis/` |
 | `test_workflow.py` | `slow` end-to-end tests and notebook execution |
+| `GUIDE.md` | guided tour: what every test, fixture and helper does and why |
+| `AI_DISCLOSURE.md` | how AI assistance was used to write this suite |
 
 ### Fixtures (`conftest.py`)
 - `_seed_and_no_show` (autouse): `np.random.seed(SEED)` (12345 unless `XRISALIS_TEST_SEED` is set), `plt.show` → no-op, `plt.close("all")` after each test.
