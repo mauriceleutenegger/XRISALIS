@@ -25,7 +25,7 @@ pip install -e ".[dev,test]"
 
 ### CI
 
-`.github/workflows/ci.yml` (local fork, not pushed): job `build` runs ruff and the
+`.github/workflows/ci.yml`: job `build` runs ruff and the
 fast tier on Python 3.11–3.14 for every push/PR; job `slow-tests` runs `pytest -m slow`
 on Python 3.13 for manual (`workflow_dispatch`) runs only. Both use a non-editable
 install (`pip install '.[dev,test]'`), which has been checked to pass locally.

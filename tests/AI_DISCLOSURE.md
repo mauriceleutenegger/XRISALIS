@@ -35,8 +35,9 @@ the plan and the results of each implementation step before the next began.
 - The physics expectations encoded in the tests (fringe spacing, off-axis fringe
   shift, Fresnel limits, reconstruction geometry, event-count models) were derived
   by the AI from the code, standard optics and the reference notebook. They have
-  passed the checks described above but should be reviewed by a domain expert,
-  as should the classification of behaviours as bugs.
+  passed the checks described above and been given a cursory review by the
+  maintainer, but should still be reviewed in detail by a domain expert, as
+  should the classification of behaviours as bugs.
 - Statistical tests use ≥ 5σ tolerances and were checked under 10–11 seeds; a
   very rare spurious failure remains possible by construction.
 - The CI workflow was checked by reproducing its commands in a fresh local
