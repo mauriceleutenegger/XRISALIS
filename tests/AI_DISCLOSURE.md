@@ -41,4 +41,4 @@ the plan and the results of each implementation step before the next began.
 - Statistical tests use ≥ 5σ tolerances and were checked under 10–11 seeds; a
   very rare spurious failure remains possible by construction.
 - The CI workflow was checked by reproducing its commands in a fresh local
-  virtual environment, not by running it on GitHub Actions.
+  virtual environment and by running it on GitHub Actions (both jobs passed).
